@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OS Scheduler — Priority vs SRTF</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"> <span>OS</span> Scheduler</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active-a" onclick="showPage('priority')"><span class="dot dot-a"></span>Priority</button>
+    <button class="nav-tab" onclick="showPage('srtf')"><span class="dot dot-b"></span>SRTF</button>
+    <button class="nav-tab" onclick="showPage('comparison')"><span class="dot dot-c"></span>Comparison</button>
+  </div>
+</nav>
+
+
+<div id="page-priority" class="page active">
+  <div class="page-header">
+    <h1><span class="tag tag-a">Algorithm A</span>Priority Scheduling</h1>
+    <p>Preemptive · Lower number = Higher priority · Tie-breaking by Arrival Time then PID</p>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:24px">
+    <div class="card">
+      <div class="card-title">Process Input</div>
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="clearTable('priority')">Clear</button>
+      </div>
+      <div class="process-table-wrap">
+        <table class="process-input-table">
+          <thead>
+            <tr>
+              <th>PID</th><th>Arrival</th><th>Burst</th><th>Priority</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="priority-tbody"></tbody>
+        </table>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="addRow('priority')">+ Add Process</button>
+        <button class="btn btn-primary" onclick="runScheduler('priority')">▶ Run Priority</button>
+      </div>
+      <div class="alerts-container" id="priority-alerts"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Algorithm Rules</div>
+      <div class="tie-rule-box" id="priority-tie-box">
+        <strong>Tie-Breaking Rule:</strong><br>
+        When two processes have the <em>same priority</em>, the one with the <strong>earlier arrival time</strong> runs first. If arrival is also equal, lower <strong>PID</strong> wins.<br><br>
+        <strong>Preemption:</strong> A running process is preempted when a higher-priority process arrives.
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-title">Gantt Chart — Priority Scheduling</div>
+    <div id="priority-gantt-container"><div class="empty-state"><div class="empty-icon"></div>Run the scheduler to see the Gantt chart</div></div>
+  </div>
+
+  
+  <div class="card">
+    <div class="card-title">Per-Process Metrics</div>
+    <div id="priority-metrics-container"><div class="empty-state"><div class="empty-icon"></div>Metrics will appear after running</div></div>
+  </div>
+</div>
+
+
+<div id="page-srtf" class="page">
+  <div class="page-header">
+    <h1><span class="tag tag-b">Algorithm B</span>SRTF Scheduling</h1>
+    <p>Preemptive · Shortest Remaining Time First · Immediate preemption on new arrival</p>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:24px">
+    <div class="card">
+      <div class="card-title">Process Input</div>
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="clearTable('srtf')">Clear</button>
+      </div>
+      <div class="process-table-wrap">
+        <table class="process-input-table">
+          <thead>
+            <tr>
+              <th>PID</th><th>Arrival</th><th>Burst</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="srtf-tbody"></tbody>
+        </table>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="addRow('srtf')">+ Add Process</button>
+        <button class="btn btn-danger" onclick="runScheduler('srtf')">▶ Run SRTF</button>
+      </div>
+      <div class="alerts-container" id="srtf-alerts"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Algorithm Rules</div>
+      <div class="tie-rule-box" id="srtf-tie-box">
+        <strong>Tie-Breaking Rule:</strong><br>
+        When two processes have the <em>same remaining time</em>, the one with the <strong>earlier arrival time</strong> continues (or wins). If equal, lower <strong>PID</strong> wins.<br><br>
+        <strong>Preemption:</strong> When a new process arrives with a shorter remaining time than the current running process, it immediately preempts it. Preemption points are marked on the Gantt chart.
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-title">Gantt Chart — SRTF Scheduling</div>
+    <div id="srtf-gantt-container"><div class="empty-state"><div class="empty-icon"></div>Run the scheduler to see the Gantt chart</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Per-Process Metrics</div>
+    <div id="srtf-metrics-container"><div class="empty-state"><div class="empty-icon"></div>Metrics will appear after running</div></div>
+  </div>
+</div>
+
+
+<div id="page-comparison" class="page">
+  <div class="page-header">
+    <h1><span class="tag tag-c">C1</span>Priority vs SRTF — Comparison</h1>
+    <p>Same workload · Both algorithms · Performance · Fairness · Trade-offs</p>
+  </div>
+
+  <div id="comp-no-data" class="card" style="text-align:center; padding:48px">
+    <div style="font-size:2.5rem; margin-bottom:12px"></div>
+    <div style="color:var(--muted); font-family:var(--font-mono); font-size:0.85rem">Run both Priority and SRTF schedulers first, then comparison will appear here.</div>
+  </div>
+
+  <div id="comp-content" style="display:none">
+    
+    <div class="grid-3" style="margin-bottom:24px" id="comp-stats"></div>
+
+    
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-title">Per-Process Comparison — WT / TAT / RT</div>
+      <div style="overflow-x:auto"><table class="compare-table" id="comp-process-table"></table></div>
+    </div>
+
+    
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-title">Average Metrics Comparison</div>
+      <div style="overflow-x:auto"><table class="compare-table" id="comp-avg-table"></table></div>
+    </div>
+
+    
+    <div class="grid-2" style="margin-bottom:24px">
+      <div class="card">
+        <div class="card-title">Required Analysis Questions</div>
+        <div id="comp-analysis"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Trade-off Summary</div>
+        <div id="comp-tradeoff"></div>
+      </div>
+    </div>
+
+    
+    <div class="card">
+      <div class="card-title">Required Conclusion</div>
+      <div id="comp-conclusion"></div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
