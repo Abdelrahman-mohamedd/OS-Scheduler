@@ -27,5 +27,5 @@ A web-based application for comparing Priority Scheduling and SRTF algorithms.
 - Soliman EL_sayed sloiman
 - Karim fady hassan
 - Sara mostafa salah
-- Salma Ahmed said
+- Salma Ahmed saeed
 - Sara yasser mohamed
