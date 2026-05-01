@@ -24,7 +24,7 @@ A web-based application for comparing Priority Scheduling and SRTF algorithms.
 
 ## Team Members
 - Abdelrahman Mohamed Abdelrahman
-- Soliman EL_sayed sloiman
+- Soliman EL_sayed soliman
 - Karim fady hassan
 - Sara mostafa salah
 - Salma Ahmed saeed
