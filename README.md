@@ -9,6 +9,8 @@ A web-based application for comparing Priority Scheduling and SRTF algorithms.
 - Gantt Chart
 - Waiting Time Calculation
 - Turnaround Time Calculation
+- Response Time Calculation 
+- AVG WT , TAT , RT Calculation
 - Input Validation
 
 ## Technologies Used
