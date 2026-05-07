@@ -227,22 +227,5 @@ It verifies that the scheduler correctly detects and reports errors before runni
 
 ---
 
-### Expected Output
 
-#### Priority Scheduling — Validation Errors
-
-| Row | PID | Error Message |
-|-----|-----|---------------|
-| 1   | P1  | Priority must be ≥ 1 (got 0) |
-| 2   | P1  | Duplicate PID "P1" — PIDs must be unique |
-| 3   | P3  | Arrival time cannot be negative (got -1) — must be ≥ 0 |
-
-#### SRTF Scheduling — Validation Errors
-
-| Row | PID | Error Message |
-|-----|-----|---------------|
-| 2   | P1  | Duplicate PID "P1" — PIDs must be unique |
-| 3   | P3  | Arrival time cannot be negative (got -1) — must be ≥ 0 |
-
----
 
