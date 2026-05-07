@@ -52,7 +52,7 @@ function clearTable(type) {
   document.getElementById(type + '-alerts').innerHTML = '';
   document.getElementById(type + '-gantt-container').innerHTML = '<div class="empty-state"><div class="empty-icon"></div>Run the scheduler to see the Gantt chart</div>';
   document.getElementById(type + '-metrics-container').innerHTML = '<div class="empty-state"><div class="empty-icon"></div>Metrics will appear after running</div>';
-  document.getElementById(type + '-scenarios').innerHTML = '<div class="no-data">Run scheduler to detect scenarios</div>';
+  const sc = document.getElementById(type + '-scenarios'); if (sc) sc.innerHTML = '<div class="no-data">Run scheduler to detect scenarios</div>';
   state[type].results = null;
 }
 
@@ -61,49 +61,53 @@ const SCENARIOS = {
   priority: {
     A: [
       {pid:'P1', arr:0, burst:6, priority:2},
-      {pid:'P2', arr:2, burst:4, priority:1},
-      {pid:'P3', arr:4, burst:2, priority:3},
-      {pid:'P4', arr:6, burst:3, priority:2},
+      {pid:'P2', arr:1, burst:4, priority:1},
+      {pid:'P3', arr:2, burst:2, priority:3},
+      {pid:'P4', arr:3, burst:5, priority:2},
     ],
     B: [
-      {pid:'P1', arr:0, burst:8, priority:1},
-      {pid:'P2', arr:1, burst:2, priority:3},
+      {pid:'P1', arr:0, burst:10, priority:1},
+      {pid:'P2', arr:1, burst:2, priority:4},
       {pid:'P3', arr:2, burst:3, priority:3},
+      {pid:'P4', arr:3, burst:1, priority:2},
     ],
     C: [
-      {pid:'P1', arr:0, burst:1, priority:1},
-      {pid:'P2', arr:0, burst:10, priority:2},
-      {pid:'P3', arr:0, burst:10, priority:2},
-      {pid:'P4', arr:0, burst:10, priority:2},
+      {pid:'P1', arr:0, burst:15, priority:5},
+      {pid:'P2', arr:1, burst:3, priority:1},
+      {pid:'P3', arr:2, burst:2, priority:1},
+      {pid:'P4', arr:3, burst:4, priority:1},
     ],
     D: [
-      {pid:'P1', arr:0, burst:4, priority:1},
+      {pid:'P1', arr:0, burst:4, priority:0},
       {pid:'P1', arr:2, burst:3, priority:2},
       {pid:'P3', arr:-1, burst:5, priority:1},
+      {pid:'P4', arr:3, burst:6, priority:3},
     ]
   },
   srtf: {
     A: [
       {pid:'P1', arr:0, burst:6},
-      {pid:'P2', arr:2, burst:4},
-      {pid:'P3', arr:4, burst:2},
-      {pid:'P4', arr:6, burst:3},
+      {pid:'P2', arr:1, burst:4},
+      {pid:'P3', arr:2, burst:2},
+      {pid:'P4', arr:3, burst:5},
     ],
     B: [
-      {pid:'P1', arr:0, burst:8},
+      {pid:'P1', arr:0, burst:10},
       {pid:'P2', arr:1, burst:2},
       {pid:'P3', arr:2, burst:3},
+      {pid:'P4', arr:3, burst:1},
     ],
     C: [
-      {pid:'P1', arr:0, burst:1},
-      {pid:'P2', arr:0, burst:10},
-      {pid:'P3', arr:0, burst:10},
-      {pid:'P4', arr:0, burst:10},
+      {pid:'P1', arr:0, burst:15},
+      {pid:'P2', arr:1, burst:3},
+      {pid:'P3', arr:2, burst:2},
+      {pid:'P4', arr:3, burst:4},
     ],
     D: [
       {pid:'P1', arr:0, burst:4},
       {pid:'P1', arr:2, burst:3},
       {pid:'P3', arr:-1, burst:5},
+      {pid:'P4', arr:3, burst:6},
     ]
   }
 };
