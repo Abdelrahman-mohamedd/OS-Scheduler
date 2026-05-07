@@ -208,7 +208,7 @@ It verifies that the scheduler correctly detects and reports errors before runni
 | P1  | 0           | 4          | 0        |
 | P1  | 2           | 3          | 2        |
 | P3  | -1          | 5          | 1        |
-| P4  | 3           | 6          | 1        |
+| P4  | 3           | 6          | 3        |
 
 ---
 
