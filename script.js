@@ -528,33 +528,40 @@ function buildComparison() {
   const avgSR = avg(sm.map(m=>m.rt));
 
   
-  const better = (a, b) => a <= b;
+  const eq = (a, b) => Math.abs(a - b) < 0.001;
+  const betterOrEq = (a, b) => a <= b + 0.001;
+
+  const wtLabel = eq(avgPW,avgSW) ? 'Tie' : (avgPW < avgSW ? 'Priority' : 'SRTF');
+  const tatLabel = eq(avgPT,avgST) ? 'Tie' : (avgPT < avgST ? 'Priority' : 'SRTF');
+  const rtLabel = eq(avgPR,avgSR) ? 'Tie' : (avgPR < avgSR ? 'Priority' : 'SRTF');
+
   document.getElementById('comp-stats').innerHTML = `
     <div class="stat-card">
       <div class="stat-label">Avg WT Winner</div>
-      <div class="stat-val" style="font-size:1.1rem; color:${better(avgPW,avgSW)?'var(--accent-a)':'var(--accent-b)'}">${better(avgPW,avgSW)?'Priority':'SRTF'}</div>
-      <div class="stat-sub">${Math.min(avgPW,avgSW).toFixed(2)} vs ${Math.max(avgPW,avgSW).toFixed(2)}</div>
+      <div class="stat-val" style="font-size:1.1rem; color:${wtLabel==='Priority'?'var(--accent-a)':wtLabel==='SRTF'?'var(--accent-b)':'var(--accent-c)'}">${wtLabel}</div>
+      <div class="stat-sub">${avgPW.toFixed(2)} vs ${avgSW.toFixed(2)}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Avg TAT Winner</div>
-      <div class="stat-val" style="font-size:1.1rem; color:${better(avgPT,avgST)?'var(--accent-a)':'var(--accent-b)'}">${better(avgPT,avgST)?'Priority':'SRTF'}</div>
-      <div class="stat-sub">${Math.min(avgPT,avgST).toFixed(2)} vs ${Math.max(avgPT,avgST).toFixed(2)}</div>
+      <div class="stat-val" style="font-size:1.1rem; color:${tatLabel==='Priority'?'var(--accent-a)':tatLabel==='SRTF'?'var(--accent-b)':'var(--accent-c)'}">${tatLabel}</div>
+      <div class="stat-sub">${avgPT.toFixed(2)} vs ${avgST.toFixed(2)}</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Avg RT Winner</div>
-      <div class="stat-val" style="font-size:1.1rem; color:${better(avgPR,avgSR)?'var(--accent-a)':'var(--accent-b)'}">${better(avgPR,avgSR)?'Priority':'SRTF'}</div>
-      <div class="stat-sub">${Math.min(avgPR,avgSR).toFixed(2)} vs ${Math.max(avgPR,avgSR).toFixed(2)}</div>
+      <div class="stat-val" style="font-size:1.1rem; color:${rtLabel==='Priority'?'var(--accent-a)':rtLabel==='SRTF'?'var(--accent-b)':'var(--accent-c)'}">${rtLabel}</div>
+      <div class="stat-sub">${avgPR.toFixed(2)} vs ${avgSR.toFixed(2)}</div>
     </div>
   `;
 
   
   const allPids = [...new Set([...pm.map(m=>m.pid), ...sm.map(m=>m.pid)])];
   let ptHTML = `<thead><tr>
-    <th>PID</th>
-    <th colspan="3" style="color:var(--accent-a)">Priority</th>
-    <th colspan="3" style="color:var(--accent-b)">SRTF</th>
+    <th rowspan="2" style="vertical-align:middle">PID</th>
+    <th colspan="3" style="color:var(--accent-a); border-bottom:2px solid var(--accent-a); padding-bottom:6px">PRIORITY</th>
+    <th colspan="3" style="color:var(--accent-b); border-bottom:2px solid var(--accent-b); padding-bottom:6px">SRTF</th>
   </tr><tr>
-    <th></th><th>WT</th><th>TAT</th><th>RT</th><th>WT</th><th>TAT</th><th>RT</th>
+    <th style="color:var(--accent-a)">WT</th><th style="color:var(--accent-a)">TAT</th><th style="color:var(--accent-a)">RT</th>
+    <th style="color:var(--accent-b)">WT</th><th style="color:var(--accent-b)">TAT</th><th style="color:var(--accent-b)">RT</th>
   </tr></thead><tbody>`;
 
   allPids.forEach((pid, i) => {
@@ -569,9 +576,12 @@ function buildComparison() {
     ptHTML += `<tr>
       <td><span class="pid-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${pid}</span></td>
       ${p && s ? `
-        ${cell(p.wt, s.wt)}
-        ${cell(p.tat, s.tat)}
-        ${cell(p.rt, s.rt)}
+        <td class="${p.wt < s.wt ?'better-a': p.wt === s.wt ?'':'loser'}">${p.wt}</td>
+        <td class="${p.tat < s.tat ?'better-a': p.tat === s.tat ?'':'loser'}">${p.tat}</td>
+        <td class="${p.rt < s.rt ?'better-a': p.rt === s.rt ?'':'loser'}">${p.rt}</td>
+        <td class="${s.wt < p.wt ?'better-b': s.wt === p.wt ?'':'loser'}">${s.wt}</td>
+        <td class="${s.tat < p.tat ?'better-b': s.tat === p.tat ?'':'loser'}">${s.tat}</td>
+        <td class="${s.rt < p.rt ?'better-b': s.rt === p.rt ?'':'loser'}">${s.rt}</td>
       ` : `<td colspan="6" style="text-align:center;color:var(--muted)">N/A</td>`}
     </tr>`;
   });
@@ -592,22 +602,30 @@ function buildComparison() {
   document.getElementById('comp-avg-table').innerHTML = avgHTML;
 
   
-  const wtWin = avgPW <= avgSW ? 'Priority' : 'SRTF';
-  const rtWin = avgPR <= avgSR ? 'Priority' : 'SRTF';
+  const wtWin = eq(avgPW,avgSW) ? 'Tie' : (avgPW < avgSW ? 'Priority' : 'SRTF');
+  const rtWin = eq(avgPR,avgSR) ? 'Tie' : (avgPR < avgSR ? 'Priority' : 'SRTF');
 
   const pProcs = state.priority.processes;
   const hasPriority = pProcs.some(p => p.priority !== undefined);
   const hasLongHighPri = hasPriority && pProcs.some(p => p.priority === Math.min(...pProcs.map(x=>x.priority)) && p.burst > avg(pProcs.map(x=>x.burst)));
   const hasShortLowPri = hasPriority && pProcs.some(p => p.priority === Math.max(...pProcs.map(x=>x.priority)) && p.burst < avg(pProcs.map(x=>x.burst)));
 
+  const wtWinText = wtWin === 'Tie'
+    ? `<span style="color:var(--accent-c)">Both are equal — average WT is ${avgPW.toFixed(2)} for both algorithms.</span>`
+    : `<span class="${wtWin==='Priority'?'a-col':'b-col'}">${wtWin} (${wtWin==='Priority'?avgPW.toFixed(2):avgSW.toFixed(2)} vs ${wtWin==='Priority'?avgSW.toFixed(2):avgPW.toFixed(2)})</span>`;
+
+  const rtWinText = rtWin === 'Tie'
+    ? `<span style="color:var(--accent-c)">Both are equal — average RT is ${avgPR.toFixed(2)} for both algorithms.</span>`
+    : `<span class="${rtWin==='Priority'?'a-col':'b-col'}">${rtWin} (${rtWin==='Priority'?avgPR.toFixed(2):avgSR.toFixed(2)} vs ${rtWin==='Priority'?avgSR.toFixed(2):avgPR.toFixed(2)})</span>`;
+
   document.getElementById('comp-analysis').innerHTML = `
     <div class="analysis-q">
       <div class="q">Q1: Which algorithm produced the lower average waiting time?</div>
-      <div class="a ${wtWin==='Priority'?'a-col':'b-col'}">${wtWin} </div>
+      <div class="a">${wtWinText}</div>
     </div>
     <div class="analysis-q">
       <div class="q">Q2: Which algorithm produced the lower average response time?</div>
-      <div class="a ${rtWin==='Priority'?'a-col':'b-col'}">${rtWin} </div>
+      <div class="a">${rtWinText}</div>
     </div>
     <div class="analysis-q">
       <div class="q">Q3: Did priority values improve treatment of urgent processes?</div>
@@ -639,6 +657,9 @@ function buildComparison() {
 
   
   const overallWin = scoreWinner(avgPW,avgSW,avgPT,avgST,avgPR,avgSR);
+  const overallWinText = overallWin === 'Tie'
+    ? 'Both algorithms performed equally — no clear winner on combined WT, TAT, and RT averages.'
+    : `${overallWin === 'Priority' ? '<span style="color:var(--accent-a)">Priority Scheduling</span>' : '<span style="color:var(--accent-b)">SRTF</span>'} performed better on this dataset based on combined WT, TAT, and RT averages.`;
 
   
   const pProcsAll = state.priority.processes;
@@ -663,7 +684,7 @@ function buildComparison() {
   document.getElementById('comp-conclusion').innerHTML = `
     <div class="conclusion-item">
       <div class="conclusion-icon" style="background:rgba(79,217,160,.15); color:var(--accent-c)"></div>
-      <div class="conclusion-text"><strong>Overall Performance:</strong> ${overallWin === 'Priority' ? '<span style="color:var(--accent-a)">Priority Scheduling</span>' : '<span style="color:var(--accent-b)">SRTF</span>'} performed better on this dataset based on combined WT, TAT, and RT averages.</div>
+      <div class="conclusion-text"><strong>Overall Performance:</strong> ${overallWinText}</div>
     </div>
     <div class="conclusion-item">
       <div class="conclusion-icon" style="background:rgba(79,142,247,.15); color:var(--accent-a)"></div>
@@ -700,45 +721,53 @@ function buildComparison() {
 }
 
 function avgRow(label, pv, sv) {
-  const pWin = pv <= sv;
+  const tied = Math.abs(pv - sv) < 0.001;
+  const pWin = !tied && pv < sv;
+  const sWin = !tied && sv < pv;
   return `<tr>
     <td>${label}</td>
-    <td class="${pWin?'better-a':'loser'}">${pv.toFixed(2)} ${pWin?'':''}</td>
-    <td class="${!pWin?'better-b':'loser'}">${sv.toFixed(2)} ${!pWin?'':''}</td>
-    <td class="${pWin?'better-a':'better-b'}">${pWin?'Priority':'SRTF'}</td>
+    <td class="${pWin?'better-a':tied?'':'loser'}">${pv.toFixed(2)}</td>
+    <td class="${sWin?'better-b':tied?'':'loser'}">${sv.toFixed(2)}</td>
+    <td style="color:${tied?'var(--accent-c)':pWin?'var(--accent-a)':'var(--accent-b)'}">${tied?'Tie ⚖':pWin?'Priority ':'SRTF '}</td>
   </tr>`;
 }
 
 function recommend(pw, sw, pt, st, pr, sr) {
-  let pScore = 0, sScore = 0;
-  if (pw <= sw) pScore++; else sScore++;
-  if (pt <= st) pScore++; else sScore++;
-  if (pr <= sr) pScore++; else sScore++;
-  if (pScore > sScore) return `Priority Scheduling — wins on ${pScore}/3 metrics for this workload. Best when process urgency matters.`;
-  if (sScore > pScore) return `SRTF — wins on ${sScore}/3 metrics for this workload. Best for maximizing throughput with short jobs.`;
-  return `Tie — both algorithms perform equally on this workload. Choose Priority if urgency matters, SRTF for pure efficiency.`;
+  const eq = (a,b) => Math.abs(a-b) < 0.001;
+  let pScore = 0, sScore = 0, ties = 0;
+  if (eq(pw,sw)) ties++; else if (pw < sw) pScore++; else sScore++;
+  if (eq(pt,st)) ties++; else if (pt < st) pScore++; else sScore++;
+  if (eq(pr,sr)) ties++; else if (pr < sr) pScore++; else sScore++;
+  if (pScore > sScore) return `Priority Scheduling — wins on ${pScore}/3 metrics${ties?` (${ties} tied)`:''}. Best when process urgency matters.`;
+  if (sScore > pScore) return `SRTF — wins on ${sScore}/3 metrics${ties?` (${ties} tied)`:''}. Best for maximizing throughput with short jobs.`;
+  if (ties === 3) return `Both algorithms perform identically on all 3 metrics for this workload. Choose Priority if urgency matters, SRTF for pure efficiency.`;
+  return `Tie — both algorithms score equally${ties?` (${ties} metric(s) also tied)`:''}. Choose Priority if urgency matters, SRTF for pure efficiency.`;
 }
 
 function scoreWinner(pw, sw, pt, st, pr, sr) {
+  const eq = (a,b) => Math.abs(a-b) < 0.001;
   let ps = 0, ss = 0;
-  if (pw <= sw) ps++; else ss++;
-  if (pt <= st) ps++; else ss++;
-  if (pr <= sr) ps++; else ss++;
-  return ps >= ss ? 'Priority' : 'SRTF';
+  if (!eq(pw,sw)) { if (pw < sw) ps++; else ss++; }
+  if (!eq(pt,st)) { if (pt < st) ps++; else ss++; }
+  if (!eq(pr,sr)) { if (pr < sr) ps++; else ss++; }
+  if (ps === ss) return 'Tie';
+  return ps > ss ? 'Priority' : 'SRTF';
 }
 
 function metricLeaders(who, pw, sw, pt, st, pr, sr) {
+  const eq = (a,b) => Math.abs(a-b) < 0.001;
   const leaders = [];
-  if ((who==='Priority' && pw<=sw)||(who==='SRTF' && sw<pw)) leaders.push('WT');
-  if ((who==='Priority' && pt<=st)||(who==='SRTF' && st<pt)) leaders.push('TAT');
-  if ((who==='Priority' && pr<=sr)||(who==='SRTF' && sr<pr)) leaders.push('RT');
+  if (!eq(pw,sw) && ((who==='Priority' && pw<sw)||(who==='SRTF' && sw<pw))) leaders.push('WT');
+  if (!eq(pt,st) && ((who==='Priority' && pt<st)||(who==='SRTF' && st<pt))) leaders.push('TAT');
+  if (!eq(pr,sr) && ((who==='Priority' && pr<sr)||(who==='SRTF' && sr<pr))) leaders.push('RT');
   return leaders.length ? leaders.join(', ') : 'None';
 }
 
 function fairness(pw, sw, pm, sm) {
   const pMaxWT = Math.max(...pm.map(m=>m.wt));
   const sMaxWT = Math.max(...sm.map(m=>m.wt));
-  if (pMaxWT <= sMaxWT) return `<span style="color:var(--accent-a)">Priority Scheduling</span> showed fairer distribution — max waiting time of ${pMaxWT} vs SRTF's ${sMaxWT}. However, fairness in Priority depends heavily on the priority assignment.`;
+  if (pMaxWT === sMaxWT) return `Both algorithms showed equal fairness — max waiting time of ${pMaxWT} for both. Fairness in Priority depends heavily on priority assignments.`;
+  if (pMaxWT < sMaxWT) return `<span style="color:var(--accent-a)">Priority Scheduling</span> showed fairer distribution — max waiting time of ${pMaxWT} vs SRTF's ${sMaxWT}. However, fairness in Priority depends heavily on the priority assignment.`;
   return `<span style="color:var(--accent-b)">SRTF</span> showed fairer overall distribution — max waiting time of ${sMaxWT} vs Priority's ${pMaxWT}. SRTF's burst-time optimization tends to reduce extreme waiting cases.`;
 }
 
