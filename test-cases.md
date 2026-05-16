@@ -1,12 +1,24 @@
-# Test Scenarios
+# Test Cases
 
 ---
+## Test Case 1
 
 ## Scenario A: Basic Mixed Workload (Normal Case)
 
 ### Purpose
 This scenario tests a normal workload with multiple processes having different arrival times, burst times, and priorities.
 It verifies that both algorithms work correctly under standard conditions.
+
+## Preconditions:
+
+Simulator is opened successfully.
+User is on scheduling page.
+
+## Steps:
+
+Select Priority Scheduling.
+Enter process data for P1, P2, P3, and P4.
+Click Run Simulation
 
 ### Input
 
@@ -62,16 +74,32 @@ P1 | P2 | P3 | P2 | P1 | P4
 | P4  | 3       | 5     | 17     | 9     | 14    | 9    |
 | **Average** | | |        | **4.25** | **8.50** | **2.25** |
 
+## Actual Result:
+Output matched expected result.
+
+Status: Pass
+
 ------------------------------------------------------------------------------------------------------------
 
 
-
+## Test Case 2
 
 ## Scenario B: Conflict Between Priority and Burst Time
 
 ### Purpose
 This scenario creates a conflict between process priority and burst time.
 It demonstrates the behavioral difference between Priority Scheduling and SRTF.
+
+## Preconditions:
+
+Simulator is opened successfully.
+User is on scheduling page.
+
+## Steps:
+
+Select Priority Scheduling.
+Enter process data for P1, P2, P3, and P4.
+Click Run Simulation
 
 ### Input
 
@@ -110,6 +138,11 @@ P1 | P4 | P3 | P2
 | P4  | 3       | 1     | 2        | 11     | 7     | 8     | 7    |
 | **Average** | | | |        | **7.25** | **11.25** | **7.25** |
 
+## Actual Result:
+Output matched expected result.
+
+Status: Pass
+
 ---
 
 #### SRTF Scheduling Gantt Chart
@@ -128,13 +161,24 @@ P1 | P2 | P4 | P3 | P1
 ------------------------------------------------------------------------------------------------------------
 
 
-
+## Test Case 3 
 
 ## Scenario C: Starvation-Sensitive Case
 
 ### Purpose
 This scenario demonstrates starvation in Priority Scheduling.
 A low-priority long process waits while higher-priority processes continue arriving.
+
+## Preconditions:
+
+Simulator is opened successfully.
+User is on scheduling page.
+
+## Steps:
+
+Select Priority Scheduling.
+Enter process data for P1, P2, P3, and P4.
+Click Run Simulation
 
 ### Input
 
@@ -190,16 +234,33 @@ P1 | P2 | P3 | P2 | P4 | P1
 | P4  | 3       | 4     | 10     | 3     | 7     | 3    |
 | **Average** | | |        | **3.50** | **9.50** | **0.75** |
 
+
+## Actual Result:
+Output matched expected result.
+
+Status: Pass
+
 ------------------------------------------------------------------------------------------------------------
 
 
-
+## Test Case 4
 
 ## Scenario D: Invalid Input Validation
 
 ### Purpose
 This scenario tests the system's input validation by providing invalid data.
 It verifies that the scheduler correctly detects and reports errors before running.
+
+## Preconditions:
+
+Simulator is opened successfully.
+User is on scheduling page.
+
+## Steps:
+
+Select Priority Scheduling.
+Enter process data for P1, P2, P3, and P4.
+Click Run Simulation
 
 ### Input
 
@@ -227,5 +288,9 @@ It verifies that the scheduler correctly detects and reports errors before runni
 
 ---
 
+## Actual Result:
+Output matched expected result.
+
+Status: Pass
 
 
